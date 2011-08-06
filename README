@@ -1,0 +1,45 @@
+Let we have two classes:
+
+public class ClassToMock {
+    public String getText(){
+        return "original text";
+    }
+}
+
+and 
+
+public class CreateInConstructor {
+
+    private ClassToMock classToMock;
+
+    public CreateInConstructor() {
+        classToMock = new ClassToMock();
+    }
+
+    public ClassToMock getClassToMock() {
+        return classToMock;
+    }
+}
+
+We want to test CreateInConstructor class. But JMock have no ability to mock class creation. With new-instance-transformer we can do this:
+
+    @Test
+    public void testReplaceNewInstance() throws Exception {
+        final ClassToMock mockClass = mockery.mock(ClassToMock.class);
+
+        NewInstanceReplacer.replaceNewInstance(CreateInConstructor.class, ClassToMock.class, mockClass);
+
+        mockery.checking(new Expectations() {{
+            allowing(mockClass).getText();
+            will(returnValue("new text"));
+        }});
+
+        CreateInConstructor createInConstructor = new CreateInConstructor();
+
+        assertEquals("new text", createInConstructor.getClassToMock().getText());
+
+        NewInstanceReplacer.rollbackReplaces();
+
+        createInConstructor = new CreateInConstructor();
+        assertEquals("original text", createInConstructor.getClassToMock().getText());
+    }
