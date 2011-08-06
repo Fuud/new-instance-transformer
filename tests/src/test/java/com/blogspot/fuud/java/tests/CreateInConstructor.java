@@ -8,7 +8,7 @@ public class CreateInConstructor {
         classToMock = new ClassToMock();
     }
 
-    public ClassToMock getClassToMock() {
-        return classToMock;
+    public String getText() {
+        return classToMock.getText();
     }
 }

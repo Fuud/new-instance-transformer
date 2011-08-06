@@ -29,11 +29,11 @@ public class NewInstanceReplacerTest {
 
         CreateInConstructor createInConstructor = new CreateInConstructor();
 
-        assertEquals("new text", createInConstructor.getClassToMock().getText());
+        assertEquals("new text", createInConstructor.getText());
 
         NewInstanceReplacer.rollbackReplaces();
 
         createInConstructor = new CreateInConstructor();
-        assertEquals("original text", createInConstructor.getClassToMock().getText());
+        assertEquals("original text", createInConstructor.getText());
     }
 }

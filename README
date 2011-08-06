@@ -16,12 +16,12 @@ public class CreateInConstructor {
         classToMock = new ClassToMock();
     }
 
-    public ClassToMock getClassToMock() {
-        return classToMock;
+    public String getText() {
+        return classToMock.getText();
     }
 }
 
-We want to test CreateInConstructor class. But JMock have no ability to mock class creation. With new-instance-transformer we can do this:
+We want to test CreateInConstructor.getText(). But JMock have no ability to mock class creation. With new-instance-transformer we can do this:
 
     @Test
     public void testReplaceNewInstance() throws Exception {
@@ -36,10 +36,10 @@ We want to test CreateInConstructor class. But JMock have no ability to mock cla
 
         CreateInConstructor createInConstructor = new CreateInConstructor();
 
-        assertEquals("new text", createInConstructor.getClassToMock().getText());
+        assertEquals("new text", createInConstructor.getText());
 
         NewInstanceReplacer.rollbackReplaces();
 
         createInConstructor = new CreateInConstructor();
-        assertEquals("original text", createInConstructor.getClassToMock().getText());
+        assertEquals("original text", createInConstructor.getText());
     }
