@@ -4,13 +4,11 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
 import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static junit.framework.Assert.assertEquals;
 
-@Ignore
 @RunWith(JMock.class)
 public class NewInstanceReplacerTest {
     private final Mockery mockery = new Mockery();
@@ -35,6 +33,7 @@ public class NewInstanceReplacerTest {
 
         NewInstanceReplacer.rollbackReplaces();
 
+        createInConstructor = new CreateInConstructor();
         assertEquals("original text", createInConstructor.getClassToMock().getText());
     }
 }
