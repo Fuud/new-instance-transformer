@@ -4,7 +4,13 @@
     <groupId>com.blogspot.fuud-java</groupId>
     <artifactId>new-instance-transformer</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>${artifactId}</name>
+    <name>${artifactId}</name>    
+    
+    <parent>
+        <groupId>com.blogspot.fuud-java</groupId>
+        <artifactId>new-instance-transformer-parent</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
 
     <profiles>
         <profile>
