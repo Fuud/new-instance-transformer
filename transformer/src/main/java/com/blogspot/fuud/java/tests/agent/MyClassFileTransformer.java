@@ -68,6 +68,8 @@ public class MyClassFileTransformer implements ClassFileTransformer {
         CodeConverter converter = new CodeConverter();
         converter.replaceNew(ctClassNewInstanceToReplace, replacementHolder, "getReplacement");
         testedClass.instrument(converter);
-        return testedClass.toBytecode();
+        final byte[] bytes = testedClass.toBytecode();
+        testedClass.defrost();
+        return bytes;
     }
 }
