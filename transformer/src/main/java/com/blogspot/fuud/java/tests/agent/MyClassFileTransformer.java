@@ -2,8 +2,6 @@ package com.blogspot.fuud.java.tests.agent;
 
 
 import com.blogspot.fuud.java.tests.agent.util.Singleton;
-import javassist.*;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
@@ -11,6 +9,14 @@ import java.lang.instrument.IllegalClassFormatException;
 import java.lang.reflect.Method;
 import java.security.ProtectionDomain;
 import java.util.concurrent.atomic.AtomicInteger;
+import javassist.CannotCompileException;
+import javassist.ClassPool;
+import javassist.CodeConverter;
+import javassist.CtClass;
+import javassist.CtConstructor;
+import javassist.CtMethod;
+import javassist.Modifier;
+import javassist.NotFoundException;
 
 public class MyClassFileTransformer implements ClassFileTransformer {
     private static final AtomicInteger COUNTER = new AtomicInteger(0);
@@ -27,12 +33,15 @@ public class MyClassFileTransformer implements ClassFileTransformer {
             ctClassNewInstanceToReplace = ClassPool.getDefault().get(classNewInstanceToReplace);
 
             replacementHolder = ClassPool.getDefault().getAndRename(Singleton.class.getName(), Singleton.class.getName() + COUNTER.incrementAndGet());
+            System.out.println(ctClassNewInstanceToReplace.getConstructors().length);
+            for (CtConstructor ctConstructor : ctClassNewInstanceToReplace.getConstructors()) {
+                CtMethod ctGetter = new CtMethod(ctClassNewInstanceToReplace, "getReplacement", ctConstructor.getParameterTypes(), replacementHolder);
+                ctGetter.setModifiers(Modifier.STATIC | Modifier.PUBLIC);
+                ctGetter.setBody("return ($r) getClazz();");
 
-            CtMethod ctGetter = new CtMethod(ctClassNewInstanceToReplace, "getReplacement", new CtClass[0], replacementHolder);
-            ctGetter.setModifiers(Modifier.STATIC | Modifier.PUBLIC);
-            ctGetter.setBody("return ($r) getClazz();");
+                replacementHolder.addMethod(ctGetter);
+            }
 
-            replacementHolder.addMethod(ctGetter);
             Class staticClass = replacementHolder.toClass();
             Method setter = staticClass.getMethod("setClazz", Object.class);
             setter.invoke(null, newInstance);

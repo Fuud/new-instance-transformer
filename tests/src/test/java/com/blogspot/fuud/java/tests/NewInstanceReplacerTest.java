@@ -36,4 +36,25 @@ public class NewInstanceReplacerTest {
         createInConstructor = new CreateInConstructor();
         assertEquals("original text", createInConstructor.getText());
     }
+
+    @Test
+    public void testReplaceNewInstance_withArgs() throws Exception {
+        final ClassToMockWithArgs mockClass = mockery.mock(ClassToMockWithArgs.class);
+
+        NewInstanceReplacer.replaceNewInstance(CreateInConstructorWithArgs.class, ClassToMockWithArgs.class, mockClass);
+
+        mockery.checking(new Expectations() {{
+            allowing(mockClass).getText();
+            will(returnValue("new text"));
+        }});
+
+        CreateInConstructorWithArgs createInConstructor = new CreateInConstructorWithArgs();
+
+        assertEquals("new text", createInConstructor.getText());
+
+        NewInstanceReplacer.rollbackReplaces();
+
+        createInConstructor = new CreateInConstructorWithArgs();
+        assertEquals("old text", createInConstructor.getText());
+    }
 }
